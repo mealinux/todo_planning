@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('todo_lists', function (Blueprint $table) {
             $table->id();
+            $table->tinyInteger('todo_sheet');
             $table->string('name');
             $table->string('value');
             $table->tinyInteger('estimated_duration');
