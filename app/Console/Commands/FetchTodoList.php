@@ -33,13 +33,12 @@ class FetchTodoList extends Command
     public function handle()
     {
         $endpoints = config('todo.endpoints');
-        $schema = config('todo.schema');
 
-        foreach ($endpoints as $endpoint) {
+        foreach ($endpoints as $workSheet => $endpoint) {
             try {
-                $data = $this->fetchTodoService->fetchTodoFromEndPoint($endpoint);
+                $data = $this->fetchTodoService->fetchTodoFromEndPoint(++$workSheet, $endpoint);
                 $this->todoListRepository->saveData($data);
-                $this->info("Saved data successflly from $endpoint");
+                $this->info("Saved data successfully from $endpoint");
             } catch (\Throwable $th) {
                 $this->error($th->getMessage());
             }

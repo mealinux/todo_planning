@@ -10,18 +10,18 @@ class FetchTodoService
     protected array $schema
   ) {}
 
-  public function fetchTodoFromEndPoint(string $endpoint) : array {
+  public function fetchTodoFromEndPoint(int $workSheet, string $endpoint) : array {
     
     $response = Http::get($endpoint);
 
     if($response->ok()){
-      return $this->mapData($response->json());
+      return $this->mapData($workSheet, $response->json());
     }
 
     throw new \Exception("Failed fetch data from $endpoint");
   }
 
-  private function mapData(array $data) : array {
+  private function mapData(int $workSheet, array $data) : array {
     
     $mappedData = [];
     
@@ -36,7 +36,7 @@ class FetchTodoService
         }
       }
 
-      $mappedData[] = $mappedItem;
+      $mappedData[$workSheet][] = $mappedItem;
     }
 
     return $mappedData;
