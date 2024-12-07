@@ -19,6 +19,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        /*$this->mergeConfigFrom(
+            __DIR__ . '/../../config/todo.php', 'todo'
+        );
+        */
     }
 }
