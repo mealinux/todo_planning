@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Repositories\TodoListRepository;
-use App\Services\FetchTodoService;
+use App\Repositories\TaskRepository;
+use App\Services\FetchTaskService;
 use Illuminate\Console\Command;
 
 class FetchTodoList extends Command
@@ -22,7 +22,7 @@ class FetchTodoList extends Command
      */
     protected $description = 'Fetch the Work To-Do List';
 
-    public function __construct(protected FetchTodoService $fetchTodoService, protected TodoListRepository $todoListRepository)
+    public function __construct(protected FetchTaskService $fetchTaskService, protected TaskRepository $taskRepository)
     {
         parent::__construct();
     }
@@ -36,8 +36,8 @@ class FetchTodoList extends Command
 
         foreach ($endpoints as $workSheet => $endpoint) {
             try {
-                $data = $this->fetchTodoService->fetchTodoFromEndPoint(++$workSheet, $endpoint);
-                $this->todoListRepository->saveData($data);
+                $data = $this->fetchTaskService->fetchTaskFromEndPoint(++$workSheet, $endpoint);
+                $this->taskRepository->saveData($data);
                 $this->info("Saved data successfully from $endpoint");
             } catch (\Throwable $th) {
                 $this->error($th->getMessage());

@@ -2,18 +2,19 @@
 
 namespace App\Providers;
 
-use App\Services\FetchTodoService;
+use App\Services\ApiService;
+use App\Services\FetchTaskService;
 use Illuminate\Support\ServiceProvider;
 
-class FetchTodoProvider extends ServiceProvider
+class FetchTaskProvider extends ServiceProvider
 {
     /**
      * Register services.
      */
     public function register(): void
     {
-        $this->app->singleton(FetchTodoService::class, function ($app) {
-            return new FetchTodoService(config('todo.schema'));
+        $this->app->singleton(FetchTaskService::class, function ($app) {
+            return new FetchTaskService(config('todo.schema'), $app->make(ApiService::class));
         });
     }
 

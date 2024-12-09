@@ -2,5 +2,5 @@
 
 return [
     App\Providers\AppServiceProvider::class,
-    App\Providers\FetchTodoProvider::class,
+    App\Providers\FetchTaskProvider::class,
 ];
