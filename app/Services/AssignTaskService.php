@@ -105,7 +105,7 @@ class AssignTaskService
 
         foreach ($assignments as $assignment) {
             $week = ceil($assignment['total_work_load'] / self::WEEKLY_HOUR);
-            $weeks[$week + 1][] = $assignment;
+            $weeks[$week][] = $assignment;
         }
 
         return $weeks;

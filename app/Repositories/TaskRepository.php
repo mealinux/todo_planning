@@ -3,9 +3,8 @@
 namespace App\Repositories;
 
 use App\Models\Tasks;
-use Illuminate\Support\Facades\Facade;
 
-class TaskRepository extends Facade
+class TaskRepository
 {
   public function getTasks(){
     return Tasks::orderByTotalWorkLoad()->get();
