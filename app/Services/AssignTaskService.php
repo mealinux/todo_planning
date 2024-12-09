@@ -4,8 +4,6 @@ namespace App\Services;
 
 use App\Facades\DeveloperRepositoryFacade;
 use App\Facades\TaskRepositoryFacade;
-use App\Repositories\DeveloperRepository;
-use App\Repositories\TaskRepository;
 
 class AssignTaskService
 {

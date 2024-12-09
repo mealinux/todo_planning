@@ -38,7 +38,7 @@
                         <th>Week</th>
                         <th>Developer</th>
                         <th>Group</th>
-                        <th>Task</th>
+                        <th>Task ID</th>
                         <th>Workload (hours)</th>
                     </tr>
                 </thead>
