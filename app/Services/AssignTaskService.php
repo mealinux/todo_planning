@@ -2,15 +2,14 @@
 
 namespace App\Services;
 
+use App\Facades\DeveloperRepositoryFacade;
+use App\Facades\TaskRepositoryFacade;
 use App\Repositories\DeveloperRepository;
 use App\Repositories\TaskRepository;
 
 class AssignTaskService
 {
   const WEEKLY_HOUR = 45;
-
-  public function __construct(protected DeveloperRepository $developerRepository, protected TaskRepository $taskRepository)
-  {}
   
   public function showTaskSheet()
     {
@@ -47,8 +46,8 @@ class AssignTaskService
 
     private function assignTasksAndCalculateWeeks()
     {
-        $devs = $this->developerRepository->getDevelopers();
-        $tasks = $this->taskRepository->getTasks();
+        $devs = DeveloperRepositoryFacade::getDevelopers();
+        $tasks = TaskRepositoryFacade::getTasks();
 
         // Görevleri geliştiricilere ata
         $assignments = $this->assignTasksToDevelopers($devs, $tasks);
