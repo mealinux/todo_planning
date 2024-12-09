@@ -2,17 +2,19 @@
 
 namespace App\Services;
 
+use App\Services\ApiService;
 use Illuminate\Support\Facades\Http;
 
-class FetchTodoService
+class FetchTaskService
 {
   public function __construct(
-    protected array $schema
+    protected array $schema,
+    protected ApiService $apiService
   ) {}
 
-  public function fetchTodoFromEndPoint(int $workSheet, string $endpoint) : array {
+  public function fetchTaskFromEndPoint(int $workSheet, string $endpoint) : array {
     
-    $response = Http::get($endpoint);
+    $response = $this->apiService->http($endpoint);
 
     if($response->ok()){
       return $this->mapData($workSheet, $response->json());

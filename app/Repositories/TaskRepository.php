@@ -2,16 +2,20 @@
 
 namespace App\Repositories;
 
-use App\Models\TodoList;
+use App\Models\Tasks;
 
-class TodoListRepository
+class TaskRepository
 {
+  public function getTasks(){
+    return Tasks::orderByTotalWorkLoad()->get();
+  }
+
   public function saveData(array $datas) {
     foreach ($datas as $workSheet => $data) {
       foreach ($data as $item) {
-        TodoList::updateOrCreate(
+        Tasks::updateOrCreate(
           [
-            'todo_sheet' => (int)$workSheet,
+            'task_sheet' => (int)$workSheet,
             'name' => $item['name']
           ],
           $item

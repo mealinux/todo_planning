@@ -15,7 +15,8 @@ class UserSeeder extends Seeder
         $count = 1;
         while($count <= 5){
             User::create([
-                'name' => "DEV$count"
+                'name' => "DEV$count",
+                'can_work_size' => $count
             ]);
 
             $count++;

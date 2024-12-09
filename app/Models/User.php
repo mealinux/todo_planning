@@ -18,6 +18,11 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'name', 'can_work_size',
     ];
+
+    public function scopeOrderByCanWorkSize($query)
+    {
+        return $query->orderByDesc('can_work_size');
+    }
 }
