@@ -14,34 +14,63 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body>
-        <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-              </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-              </tr>
-              <tr>
-                <th scope="row">3</th>
-                <td colspan="2">Larry the Bird</td>
-                <td>@twitter</td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="container">
+        <h1>Task Sheet</h1>
+    
+        <!-- Geliştiriciler -->
+        <div>
+            <h3>Developers</h3>
+            <ul>
+                @foreach ($assignedTasks['developers'] as $developer)
+                    <li>
+                        <span style="color: {{ $developer->color }}">{{ $developer->name }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    
+        <!-- Haftalık Görev Tablosu -->
+        <div>
+            <h3>Weekly Task Assignments</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Week</th>
+                        <th>Developer</th>
+                        <th>Group</th>
+                        <th>Task</th>
+                        <th>Workload (hours)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($assignedTasks['weeks'] as $week => $tasks)
+                        @foreach ($tasks as $task)
+                            <tr>
+                                <td>Week {{ $week }}</td>
+                                <td>
+                                    @php
+                                        $developer = $assignedTasks['developers']->firstWhere('name', $task['developer_name']);
+                                    @endphp
+                                    <span style="color: {{ $developer->color ?? '#000' }}">
+                                        {{ $task['developer_name'] }}
+                                    </span>
+                                </td>
+                                <td>{{ $task['task_sheet'] }}</td>
+                                <td>{{ $task['task_name'] }}</td>
+                                <td>{{ $task['total_work_load'] }}</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    
+        <!-- Minimum Weeks -->
+        <div>
+            <h4>Minimum Weeks to Complete Tasks: {{ $assignedTasks['minimum_weeks'] }}</h4>
+        </div>
+    </div>
+    
+    
     </body>
 </html>

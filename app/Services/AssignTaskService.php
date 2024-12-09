@@ -9,54 +9,81 @@ class AssignTaskService
 {
   const WEEKLY_HOUR = 45;
 
-  public function __construct(protected DeveloperRepository $developerRepository, protected TaskRepository $todoListRepository)
+  public function __construct(protected DeveloperRepository $developerRepository, protected TaskRepository $taskRepository)
   {}
   
-  public function assignTasksAndCalculateWeeks()
+  public function showTaskSheet()
+    {
+        $result = $this->assignTasksAndCalculateWeeks();
+
+        // Geliştiricileri al ve renk ata
+        $developers = $this->prepareDevelopersWithColors($result['developers']);
+
+        // Görevleri al ve geliştiricilere ata
+        
+        $assignments = $result['assignments'];
+        $minimumWeeks = $result['minimum_weeks'];
+
+        // Haftalar için görevleri grupla
+        $weeks = $this->groupTasksByWeeks($assignments);
+
+        return [
+            'developers' => $developers,
+            'weeks' => $weeks,
+            'minimum_weeks' => $minimumWeeks,
+        ];
+    }
+
+    private function prepareDevelopersWithColors($developers)
+    {
+        $colors = ['#007bff', '#28a745', '#dc3545', '#ffc107', '#fd7e14']; // Mavi, Yeşil, Kırmızı, Sarı, Turuncu
+
+        foreach ($developers as $index => $developer) {
+            $developer->color = $colors[$index % count($colors)];
+        }
+
+        return $developers;
+    }
+
+    private function assignTasksAndCalculateWeeks()
     {
         $devs = $this->developerRepository->getDevelopers();
-        $tasks = $this->todoListRepository->getTasks();
+        $tasks = $this->taskRepository->getTasks();
 
-        // Görevleri geliştiricilere atama işlemi
+        // Görevleri geliştiricilere ata
         $assignments = $this->assignTasksToDevelopers($devs, $tasks);
 
         // Minimum hafta sayısını hesapla
         $minimumWeeks = $this->calculateMinimumWeeks($devs, $tasks);
 
         return [
+            'developers' => $devs,
             'assignments' => $assignments,
-            'minimum_weeks' => $minimumWeeks
+            'minimum_weeks' => $minimumWeeks,
         ];
     }
 
-
-  private function assignTasksToDevelopers($devs, $tasks)
+    private function assignTasksToDevelopers($devs, $tasks)
     {
-        // Her bir developerın kapasitesini saat olarak hesapla
         $devCapacities = $devs->mapWithKeys(function ($dev) {
             return [$dev->id => $dev->can_work_size * self::WEEKLY_HOUR];
         });
 
-        // Developerlara atanacak task sonuçlarını saklamak için liste
         $assignments = [];
 
-        // Taskleri minimum sürede bitirecek şekilde atama yap
         foreach ($tasks as $task) {
-            // Developerları mevcut kapasitelerine göre sırala
             $devCapacities = $devCapacities->sortDesc();
 
             foreach ($devCapacities as $devId => $remainingCapacity) {
-                // Eğer developerın kapasitesi task için yeterliyse taskı ata
                 if ($remainingCapacity >= $task->total_work_load) {
                     $assignments[] = [
                         'developer_name' => $devs->firstWhere('id', $devId)->name,
-                        'task_name' => $task->name,
                         'task_sheet' => $task->task_sheet,
+                        'task_name' => $task->name,
+                        'total_work_load' => $task->total_work_load,
                     ];
 
-                    // Developerın kalan kapasitesini güncelle
                     $devCapacities[$devId] -= $task->total_work_load;
-
                     break;
                 }
             }
@@ -67,15 +94,21 @@ class AssignTaskService
 
     private function calculateMinimumWeeks($devs, $tasks)
     {
-        // Toplam iş yükünü hesapla
         $totalWorkLoad = $tasks->sum('total_work_load');
+        $totalWeeklyCapacity = $devs->sum(fn($dev) => $dev->can_work_size * self::WEEKLY_HOUR);
 
-        // Geliştiricilerin toplam haftalık kapasitesini hesapla
-        $totalWeeklyCapacity = $devs->sum(function ($dev) {
-            return $dev->can_work_size * self::WEEKLY_HOUR;
-        });
-
-        // Minimum bitirme süresini haftalar cinsinden hesapla
         return ceil($totalWorkLoad / $totalWeeklyCapacity);
+    }
+
+    private function groupTasksByWeeks($assignments)
+    {
+        $weeks = [];
+
+        foreach ($assignments as $assignment) {
+            $week = ceil($assignment['total_work_load'] / self::WEEKLY_HOUR);
+            $weeks[$week + 1][] = $assignment;
+        }
+
+        return $weeks;
     }
 }

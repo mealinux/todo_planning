@@ -13,7 +13,7 @@ class TodoListController extends Controller
 
     public function __invoke()
     {
-    $assignedTasks = $this->taskService->assignTasksAndCalculateWeeks();
+       $assignedTasks = $this->taskService->showTaskSheet();
 
        return view('index', compact('assignedTasks'));
     }
